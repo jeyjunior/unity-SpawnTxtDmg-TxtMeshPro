@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Player : MonoBehaviour
 {
 
@@ -13,6 +14,10 @@ public class Player : MonoBehaviour
     public Transform hitBox;
     public float rangeHitBox = 0.6f;
     public LayerMask enemiesLayers;
+
+    public int dmg;
+    public int valueMinDmg = 1, valueMaxDmg = 10;
+
 
     private void Start()
     {
@@ -48,6 +53,7 @@ public class Player : MonoBehaviour
         {
             anim.Play("playerAtk");
             delayAtk = atkTimeDuration;
+
             HitBox();
         }
     }
@@ -58,7 +64,12 @@ public class Player : MonoBehaviour
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(hitBox.position, rangeHitBox, enemiesLayers);
         foreach (Collider2D i in hitEnemies)
         {
-            i.GetComponent<Enemy>().HitTake(100);
+            //Gera dano aleatorio
+            int dmg = Random.Range(valueMinDmg, valueMaxDmg); 
+
+            //Passa o dmg para o inimigo
+            i.GetComponent<Enemy>().HitTake(dmg);
+            Debug.Log(dmg);
         }
     }
 
