@@ -26,14 +26,19 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         lifeBar.GetComponent<Slider>().value = life;
+
+        if(life <= 0)
+        {
+            life = maxLife;
+        }
     }
 
-    public void HitTake(int value)
+    public void HitTake(int value, bool crit)
     {
         life -= value;
         txtDmg.GetComponent<txtDmg>().textShow = value;
+        txtDmg.GetComponent<txtDmg>().crit = crit;
 
         Instantiate(txtDmg, posTxtHit.position, Quaternion.identity);
-        
     }
 }

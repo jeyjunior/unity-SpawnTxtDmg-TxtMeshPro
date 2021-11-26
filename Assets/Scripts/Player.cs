@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -15,12 +15,20 @@ public class Player : MonoBehaviour
     public float rangeHitBox = 0.6f;
     public LayerMask enemiesLayers;
 
-    public int dmg;
-    public int valueMinDmg = 1, valueMaxDmg = 10;
+    //Crit dmg
+    public float critRate = 1, maxDmg;
 
+    //atk and crit controll (player)
+    public Slider critRateSlider, maxDmgSlider;
+    public Text critRateText, maxDmgText;
 
     private void Start()
     {
+        //Sliders controll
+        critRateSlider.maxValue = 100;
+        maxDmgSlider.maxValue = 100;
+        maxDmgSlider.value = 10;
+
         anim = GetComponent<Animator>();
         AnimationClip[] clipsAnim = anim.runtimeAnimatorController.animationClips;
 
@@ -45,6 +53,8 @@ public class Player : MonoBehaviour
             delayAtk -= Time.deltaTime;
             isAtk = true;
         }
+
+        SliderControll();
     }
 
     public void Atk() {
@@ -65,11 +75,13 @@ public class Player : MonoBehaviour
         foreach (Collider2D i in hitEnemies)
         {
             //Gera dano aleatorio
-            int dmg = Random.Range(valueMinDmg, valueMaxDmg); 
+            int dmg = Mathf.RoundToInt(Random.Range(maxDmg / 1.2f, maxDmg));
 
-            //Passa o dmg para o inimigo
-            i.GetComponent<Enemy>().HitTake(dmg);
-            Debug.Log(dmg);
+            int x = Random.Range(0, 101);
+
+            if(x <= critRate) i.GetComponent<Enemy>().HitTake(dmg * 2, true);
+            else i.GetComponent<Enemy>().HitTake(dmg, false);
+
         }
     }
 
@@ -78,4 +90,17 @@ public class Player : MonoBehaviour
     {
         Gizmos.DrawWireSphere(hitBox.position, rangeHitBox);
     }
+
+
+    //CONTROLES CRIT RATE MAX ATK
+    void SliderControll()
+    {
+        critRate = critRateSlider.value;
+        critRateText.text = $"Crit rate: {Mathf.RoundToInt(critRateSlider.value)}";
+
+        maxDmg = maxDmgSlider.value;
+        maxDmgText.text = $"Max dmg: {Mathf.RoundToInt(maxDmgSlider.value)}";
+    }
+
+
 }
